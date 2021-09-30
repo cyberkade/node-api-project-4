@@ -16,7 +16,11 @@ const dummyData = [{
 
 const add = (user) => {
     dummyData.push(user);
-    return dummyData
+    return user;
+};
+
+const login = (credentials) => {
+    return dummyData.find( user => user.username === credentials.username && user.password === credentials.password);
 };
 
 server.get('/', (req, res) => {
@@ -29,6 +33,7 @@ server.get('/api/users', (req, res) => {
 
 server.post('/api/register', validateUser,(req, res, next) => {
     try {
+        // res.send(`<h1>Thanks for registering, ${req.newUser.username}, Enjoy!</h1>`);
         res.status(201).json(add(req.newUser));
     }
     catch (err){
@@ -38,8 +43,9 @@ server.post('/api/register', validateUser,(req, res, next) => {
 
 server.post('/api/login', validateUser, (req, res, next) => {
     try {
-        const checkCredentials = dummyData.find( user => user.username === req.newUser.username && user.password === req.newUser.password);
+        const checkCredentials = login(req.body);
         if(checkCredentials) {
+            // res.send(`<h1>Welcome to DummyApp!</h1>`);
             res.status(200).json({ message: "Welcome to DummyApp!" });
         } else {
             next({ status:400, message: "User not found, are you sure you're signed up?" });
